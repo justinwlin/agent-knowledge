@@ -102,6 +102,31 @@ or reduce Whisper model size in the handler.
 ### FAILED (general)
 Skip the row/video, log it, continue to the next.
 
+## Concurrent Requests (Batching)
+
+RunPod is serverless/on-demand — it queues and scales automatically. You can
+submit multiple jobs simultaneously without waiting for previous ones to finish.
+
+Recommended pattern: submit up to **10 jobs at once**, collect all job IDs,
+then poll all of them in a loop until each is COMPLETED or FAILED.
+
+```bash
+# Submit 10 jobs, collect IDs
+JOB_IDS=()
+for URL in "${URLS[@]}"; do
+  JOB_ID=$(curl -s -X POST "https://api.runpod.ai/v2/dukb8676whyijz/run" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $RUNPOD_KEY" \
+    -d "{\"input\": {\"audio_file\": \"$URL\", \"language\": \"en\"}}" | jq -r '.id')
+  JOB_IDS+=("$JOB_ID")
+done
+
+# Poll all until done
+for JOB_ID in "${JOB_IDS[@]}"; do
+  # poll loop per job...
+done
+```
+
 ## No Local Storage Needed
 
 RunPod downloads YouTube audio internally — nothing is stored on the calling server.
