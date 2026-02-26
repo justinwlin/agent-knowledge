@@ -10,6 +10,8 @@
 ```bash
 mkdir -p ~/.config/notion
 echo "ntn_YOUR_KEY" > ~/.config/notion/api_key
+# Also set as env var (required for the bundled OpenClaw notion skill)
+export NOTION_API_KEY=ntn_YOUR_KEY  # add to ~/.bashrc + openclaw.json env.vars
 ```
 
 ### Share pages with the integration
